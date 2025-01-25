@@ -19,6 +19,10 @@ const defineGadget = (sequelize, DataTypes) => {
     decommissionedAt: {
       type: DataTypes.DATE,
     },
+    UserId: {
+      type: DataTypes.UUID,
+      allowNull: false
+    }
   });
 
   return Gadget;

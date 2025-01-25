@@ -18,8 +18,19 @@ export const getAllGadgets = async (req, res, next) => {
       whereClause.status = status;
     }
     
-    const gadgets = await db.Gadget.findAll({ where: whereClause });
-    logger.info(`Retrieved ${gadgets.length} gadgets`);
+    // Add user filter based on role
+    if (req.user.role !== 'ADMIN') {
+      whereClause.UserId = req.user.id;
+    }
+    
+    const gadgets = await db.Gadget.findAll({
+      where: whereClause,
+      include: [{
+        model: db.User,
+        attributes: ['email', 'role'] // Only include necessary user fields
+      }]
+    });
+    logger.info(`Retrieved ${gadgets.length} gadgets for user ${req.user.email}`);
     
     const gadgetsWithProbability = gadgets.map(gadget => ({
       ...gadget.toJSON(),
@@ -39,6 +50,7 @@ export const createGadget = async (req, res) => {
     const newGadget = await db.Gadget.create({
       ...req.body,
       name: generateCodename(),
+      UserId: req.user.id // Associate gadget with current user
     });
     res.status(201).json(newGadget);
   } catch (err) {
@@ -49,9 +61,14 @@ export const createGadget = async (req, res) => {
 // PATCH to update a gadget
 export const updateGadget = async (req, res) => {
   try {
-    const gadget = await db.Gadget.findByPk(req.params.id);
+    const gadget = await db.Gadget.findOne({
+      where: {
+        id: req.params.id,
+        ...(req.user.role !== 'ADMIN' ? { UserId: req.user.id } : {})
+      }
+    });
     if (!gadget) {
-      return res.status(404).send('Gadget not found');
+      return res.status(404).send('Gadget not found or unauthorized');
     }
     await gadget.update(req.body);
     res.json(gadget);
@@ -63,17 +80,19 @@ export const updateGadget = async (req, res) => {
 // DELETE (decommission) a gadget
 export const deleteGadget = async (req, res) => {
   try {
-    
-    const gadget = await db.Gadget.findByPk(req.params.id);
+    const gadget = await db.Gadget.findOne({
+      where: {
+        id: req.params.id,
+        ...(req.user.role !== 'ADMIN' ? { UserId: req.user.id } : {})
+      }
+    });
     if (!gadget) {
-      return res.status(404).send('Gadget not found');
+      return res.status(404).send('Gadget not found or unauthorized');
     }
 
     await gadget.update({ status: 'Decommissioned', decommissionedAt: new Date() });
     res.status(201).send({
-
         message: `Gadget ${gadget.name} has been decommissioned`
-
     });
   } catch (err) {
     res.status(500).send(err.message);
@@ -84,7 +103,12 @@ export const deleteGadget = async (req, res) => {
 export const selfDestruct = async (req, res, next) => {
   try {
     logger.warn(`Self-destruct initiated for gadget ID: ${req.params.id}`);
-    const gadget = await db.Gadget.findByPk(req.params.id);
+    const gadget = await db.Gadget.findOne({
+      where: {
+        id: req.params.id,
+        ...(req.user.role !== 'ADMIN' ? { UserId: req.user.id } : {})
+      }
+    });
     
     if (!gadget) {
       logger.error(`Gadget not found: ${req.params.id}`);
