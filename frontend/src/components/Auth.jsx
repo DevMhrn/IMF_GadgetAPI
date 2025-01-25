@@ -43,9 +43,9 @@ const Auth = () => {
                 onClick={signInWithGoogle}
                 variant="outline"
                 className="engage-button w-full relative overflow-hidden group
-                         bg-black/70 border-2 border-[#00ff00] text-[#00ff00] 
-                         hover:bg-[#00ff00]/20 hover:text-white
-                         transition-all duration-500"
+                           bg-black/70 border-2 border-[#00ff00] text-[#00ff00] 
+                           hover:bg-[#00ff00]/20 hover:text-white
+                           transition-all duration-500"
                 type="button"
             >
                 <div className="flex items-center justify-center gap-3">

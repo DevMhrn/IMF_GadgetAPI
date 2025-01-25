@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 
 const Login = () => {
   return (
-    <div className="dashboard-bg min-h-screen flex items-center justify-center p-4">
+    <main className="dashboard-bg min-h-screen flex items-center justify-center p-4">
       <div className="scanner-line-horizontal" />
       <div className="scanner-line-vertical" />
       
@@ -22,7 +22,7 @@ const Login = () => {
       </Card>
       
       <div className="cyberpunk-overlay" />
-    </div>
+    </main>
   )
 }
 

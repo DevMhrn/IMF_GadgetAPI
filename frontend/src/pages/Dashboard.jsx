@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import api from '../libs/apiCalls';
 import { useStore } from '../store/index';
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 
 
 
@@ -23,14 +24,17 @@ function Dashboard() {
   const newNameRef = useRef(null);
   const confirmationCodeRef = useRef(null);
   const logout = useStore((state) => state.logout);
+  const [filterStatus, setFilterStatus] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     fetchGadgets();
   }, []);
 
-  const fetchGadgets = async () => {
+  const fetchGadgets = async (status) => {
     try {
-      const response = await api.get('/gadgets');
+      const query = status ? `?status=${status}` : '';
+      const response = await api.get('/gadgets' + query);
       const gadgetsWithStyles = Array.isArray(response.data)
         ? response.data.map(gadget => ({
           ...gadget,
@@ -44,30 +48,21 @@ function Dashboard() {
     }
   };
 
+  const neonColors = [
+    '#FF00FF', '#39FF14', '#FF6EFF', '#00FF9D', '#FF1DCE',
+    '#FFD700', '#7FFF00', '#FF4444', '#00FFEF', '#FF0099',
+    '#FF1493', '#32CD32', '#FF4500', '#8A2BE2', '#FF8C00',
+    '#00FFFF', '#FF007F', '#7DF9FF', '#FF073A', '#CCFF00',
+    '#FF55A3', '#9ACD32', '#FF00FF', '#00FF00', '#FF6B6B',
+    '#FFA343', '#ADFF2F', '#FF3855', '#00F5FF', '#DA70D6',
+    '#FF4040', '#00FF7F', '#FFD300', '#FF10F0', '#3FFF00',
+    '#FF69B4', '#00FFC0', '#FF2400', '#FFE303', '#FE59C2',
+    '#00FFAA', '#FF4D00', '#FF00CC', '#BFFF00', '#FF1287',
+    '#00FF80', '#FF3E3E', '#FF9100', '#FF00AF', '#A2FF00'
+  ];
+  
+
   const getRandomColor = () => {
-    const neonColors = [
-      '#00ff00', // Matrix green
-      '#00ffff', // Cyan
-      '#ff3300', // Red orange
-      '#ff00ff', // Magenta
-      '#ffff00', // Yellow
-      '#1e90ff', // Dodger blue
-        '#ff1493', // Deep pink
-        '#00bfff', // Deep sky blue
-        '#ff4500', // Orange red
-        '#ff8c00', // Dark orange
-        '#ff69b4', // Hot pink
-        '#00fa9a', // Medium spring green
-        '#ff6347', // Tomato
-        '#ff00ff', // Fuchsia
-        '#ff7f50', // Coral
-        '#ff1493', // Deep pink
-        '#ff69b4', // Hot pink
-
-        
-
-
-    ];
     return neonColors[Math.floor(Math.random() * neonColors.length)];
   };
 
@@ -278,6 +273,15 @@ function Dashboard() {
     </div>
   );
 
+  // Add these status options
+  const statusOptions = [
+    { value: '', label: 'All Gadgets' },
+    { value: 'Available', label: 'Available' },
+    { value: 'Deployed', label: 'Deployed' },
+    { value: 'Destroyed', label: 'Destroyed' },
+    { value: 'Decommissioned', label: 'Decommissioned' },
+  ];
+
   return (
     <div className="dashboard-bg min-h-screen">
       <BackgroundAnimation />
@@ -299,6 +303,49 @@ function Dashboard() {
         <h1 className="mission-title animate-pulse">
           Mission Control
         </h1>
+      </div>
+
+      {/* Status Filter Dropdown */}
+      <div className="fixed top-10 right-10 z-50">
+        <div className="relative">
+          <Button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="engage-button relative bg-black/75 border border-[#00ff00] text-[#00ff00] hover:bg-[#00ff00]/20 
+                      flex items-center gap-2 min-w-[180px] justify-between"
+          >
+            {filterStatus ? statusOptions.find(opt => opt.value === filterStatus)?.label : 'All Gadgets'}
+            <ChevronDownIcon className="h-4 w-4" />
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#00ff00] to-transparent animate-scan" />
+            <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#00ff00] to-transparent animate-scan-reverse" />
+          </Button>
+
+          {isDropdownOpen && (
+            <div className="absolute top-full mt-2 w-full bg-black/95 border border-[#00ff00] backdrop-blur-sm">
+              {statusOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    setFilterStatus(option.value);
+                    fetchGadgets(option.value);
+                    setIsDropdownOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-2 hover:bg-[#00ff00]/20 transition-colors
+                            ${filterStatus === option.value ? 'bg-[#00ff00]/10 text-[#00ff00]' : 'text-[#00ff00]/80'}
+                            ${filterStatus === option.value ? 'animate-pulse' : ''}
+                            relative overflow-hidden`}
+                >
+                  {option.label}
+                  {filterStatus === option.value && (
+                    <>
+                      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#00ff00] to-transparent animate-scan" />
+                      <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#00ff00] to-transparent animate-scan-reverse" />
+                    </>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Engage Button and Log Out Button */}

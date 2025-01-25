@@ -259,7 +259,7 @@
   }
 
   .animate-blink {
-    animation: blink 1.5s infinite;
+    animation: blink 1.5s ease-in-out infinite;
   }
 
   .animate-pulse-slow {
@@ -267,7 +267,7 @@
   }
 
   .animate-pulse {
-    animation: pulse 2s infinite;
+    animation: pulse 2s ease-in-out infinite;
   }
 
   .animate-spin-slow {
@@ -280,14 +280,6 @@
 
   .animate-scan {
     animation: scan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-
-  .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-
-  .animate-blink {
-    animation: blink 1.5s ease-in-out infinite;
   }
 
   .scanner-line-horizontal {
