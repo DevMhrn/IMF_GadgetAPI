@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import api from '../libs/apiCalls';
+import { useStore } from '../store/index';
 
 
 
@@ -21,6 +22,7 @@ function Dashboard() {
   const closeSelfDestructDialog = () => setShowSelfDestructDialog(false);
   const newNameRef = useRef(null);
   const confirmationCodeRef = useRef(null);
+  const logout = useStore((state) => state.logout);
 
   useEffect(() => {
     fetchGadgets();
@@ -55,27 +57,51 @@ function Dashboard() {
   };
 
   const getRandomPosition = () => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
     const cardWidth = 320;
     const cardHeight = 380;
-    const padding = 50;
-    
-    // Adjust the usable area to be centered
-    const usableWidth = viewportWidth * 0.8; // Use 80% of viewport width
-    const usableLeft = (viewportWidth - usableWidth) / 2;
-    
-    // Calculate grid
-    const columns = Math.floor(usableWidth / (cardWidth + padding));
-    const rows = Math.floor(viewportHeight / (cardHeight + padding));
-    
-    // Get random position within grid
-    const gridX = Math.floor(Math.random() * columns);
-    const gridY = Math.floor(Math.random() * rows);
-    
-    return {
-      x: usableLeft + gridX * (cardWidth + padding) + Math.random() * padding,
-      y: 150 + gridY * (cardHeight + padding) + Math.random() * padding
+    const margin = 40; // Minimum space between cards
+    const headerSpace = 120; // Space for header
+    const footerSpace = 100; // Space for footer button
+  
+    // Get actual viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+  
+    // Calculate maximum number of columns and rows that can fit
+    const columns = Math.floor((viewportWidth - margin) / (cardWidth + margin));
+    const rows = Math.floor((viewportHeight - headerSpace - footerSpace) / (cardHeight + margin));
+  
+    // Calculate available space for distribution
+    const horizontalSpace = viewportWidth - (columns * cardWidth);
+    const verticalSpace = viewportHeight - headerSpace - footerSpace - (rows * cardHeight);
+  
+    // Calculate padding between cards
+    const columnPadding = horizontalSpace / (columns + 1);
+    const rowPadding = verticalSpace / (rows + 1);
+  
+    // Random grid position with some offset
+    const gridColumn = Math.floor(Math.random() * columns);
+    const gridRow = Math.floor(Math.random() * rows);
+  
+    // Base position calculation
+    let x = columnPadding + (gridColumn * (cardWidth + columnPadding));
+    let y = headerSpace + rowPadding + (gridRow * (cardHeight + rowPadding));
+  
+    // Add random variation within cell
+    x += Math.random() * (columnPadding - margin);
+    y += Math.random() * (rowPadding - margin);
+  
+    // Ensure cards stay within viewport bounds
+    x = Math.max(margin, Math.min(x, viewportWidth - cardWidth - margin));
+    y = Math.max(headerSpace + margin, Math.min(y, viewportHeight - cardHeight - footerSpace - margin));
+  
+    // Add final random offset for organic feel
+    x += Math.random() * 40 - 20;
+    y += Math.random() * 40 - 20;
+  
+    return { 
+      x: Math.floor(x),
+      y: Math.floor(y)
     };
   };
 
@@ -260,24 +286,32 @@ function Dashboard() {
         </h1>
       </div>
 
-      {/* Engage Button */}
-      <div className="fixed bottom-8 w-full text-center z-50">
+      {/* Engage Button and Log Out Button */}
+      <div className="fixed bottom-8 w-full text-center z-50 flex justify-center space-x-4">
         <Button
           onClick={handleCreateGadget}
-          className="engage-button"
+          className="engage-button relative"
         >
           Engage Gadgets
           <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#00ff00] to-transparent animate-scan" />
           <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#00ff00] to-transparent animate-scan-reverse" />
         </Button>
+        <Button
+          onClick={logout}
+          className="engage-button relative"
+        >
+          Abort Mission
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#ff0000] to-transparent animate-scan" />
+          <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#ff0000] to-transparent animate-scan-reverse" />
+        </Button>
       </div>
 
       {/* Gadget Cards */}
-      <div className="absolute inset-0 pt-32 pb-32"> {/* Adjusted padding */}
+      <div className="absolute inset-0 pt-32 pb-32 isolate"> {/* Added isolate for stacking context */}
         {gadgets.map(gadget => (
           <Card
             key={gadget.id}
-            className="gadget-card w-80 group"
+            className="gadget-card w-80 group hover:z-50 transition-all duration-300"
             style={getCardStyle(gadget)}
           >
             <CardHeader className="border-b border-current p-4">

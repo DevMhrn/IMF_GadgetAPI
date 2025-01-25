@@ -189,8 +189,8 @@
   }
 
   @keyframes scan-vertical {
-    0% { background-position: 100% 0; }
-    100% { background-position: 0 0; }
+    0% { top: -2px; }
+    100% { top: 100%; }
   }
 
   @keyframes scan-horizontal {
@@ -290,20 +290,16 @@
   }
 
   .scanner-line-horizontal {
-    @apply absolute top-0 left-0 w-full h-[1px] 
-           bg-gradient-to-r from-transparent via-[#00ff00] to-transparent;
-    will-change: transform;
-    backface-visibility: hidden;
-    animation: scan-horizontal 5s linear infinite;
+    @apply absolute left-0 w-full h-[2px] opacity-30;
+    background: linear-gradient(90deg, transparent, #00ff00, transparent);
+    animation: scan-vertical 4s linear infinite;
   }
 
   .scanner-line-vertical {
-    @apply absolute h-full w-[2px] bg-gradient-to-b from-transparent via-[#00ff00] to-transparent;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-1px);
-    animation: vertical-scan 4s linear infinite reverse;
-}
+    @apply absolute top-0 w-[2px] h-full opacity-30;
+    background: linear-gradient(180deg, transparent, #00ff00, transparent);
+    animation: scan-horizontal 6s linear infinite;
+  }
 
   .animate-diagonal-scan {
     animation: diagonal-scan 10s linear infinite;
