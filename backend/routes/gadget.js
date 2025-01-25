@@ -11,9 +11,9 @@ import { authenticateToken } from '../middlewares/auth.js';
 const router = express.Router();
 
 // Public route
-router.get('/', getAllGadgets);
+router.get('/',authenticateToken , getAllGadgets);
 
-// Protected routes
+// Protected routes 
 router.post('/', authenticateToken, createGadget);
 
 router.patch('/:id', authenticateToken, updateGadget);

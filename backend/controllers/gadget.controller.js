@@ -19,6 +19,7 @@ export const getAllGadgets = async (req, res, next) => {
     }
     
     // Add user filter based on role
+    
     if (req.user.role !== 'ADMIN') {
       whereClause.UserId = req.user.id;
     }
