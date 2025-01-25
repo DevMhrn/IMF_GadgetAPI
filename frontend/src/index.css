@@ -89,4 +89,251 @@
            md:text-base 
            mb-2;
   }
+
+  .gadget-card {
+    @apply bg-black/85 backdrop-blur-lg cursor-pointer z-[1] hover:z-[50];
+    will-change: transform, z-index;
+    backface-visibility: hidden;
+    transition: 
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      z-index 0.3s 0.1s;
+  }
+
+  .gadget-card:hover {
+    @apply scale-105 -translate-y-2;
+    box-shadow: 
+      0 0 30px var(--card-glow-color),
+      0 0 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .cyberpunk-overlay {
+    @apply fixed inset-0 pointer-events-none z-[9998];
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0%,
+      rgba(0, 255, 0, 0.03) 50%,
+      transparent 100%
+    );
+  }
+}
+
+@layer utilities {
+  .cyberpunk-overlay {
+    @apply fixed inset-0 pointer-events-none z-50;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0%,
+      rgba(0, 255, 0, 0.03) 50%,
+      transparent 100%
+    );
+  }
+
+  .dashboard-bg {
+    @apply bg-[#0a0a0a] relative overflow-hidden;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.1) 0%, transparent 50%),
+      linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9));
+  }
+
+  .mission-title {
+    @apply text-3xl uppercase tracking-[0.5em] text-[#00ff00]/80;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  }
+
+  .engage-button-wrapper {
+    @apply relative overflow-hidden;
+    backdrop-filter: blur(5px);
+  }
+
+  .engage-button {
+    @apply bg-black/70 border-2 border-[#00ff00] text-[#00ff00] 
+           px-12 py-6 uppercase tracking-[0.25em] text-xl
+           transition-all duration-500 hover:scale-105
+           hover:bg-[#00ff00]/20 hover:text-white
+           relative overflow-hidden;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  }
+
+  .engage-button:hover {
+    box-shadow: 
+      0 0 30px rgba(0, 255, 0, 0.4),
+      0 0 60px rgba(0, 255, 0, 0.2);
+  }
+
+  .gadget-card {
+    @apply bg-black/85 backdrop-blur-lg transition-all duration-300
+           cursor-pointer hover:scale-105 hover:-translate-y-2;
+  }
+
+  .gadget-card::before {
+    content: '';
+    @apply absolute inset-[-1px] rounded-lg -z-10;
+    background: linear-gradient(45deg, transparent 30%, currentColor);
+    opacity: 0.2;
+  }
+
+  .gadget-card:hover {
+    box-shadow: 
+      0 0 30px var(--card-glow-color),
+      0 0 60px rgba(0, 0, 0, 0.3);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes scan {
+    0% { background-position: 0 100%; }
+    100% { background-position: 0 0; }
+  }
+
+  @keyframes scan-vertical {
+    0% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+  }
+
+  @keyframes scan-horizontal {
+    0% { left: -2px; }
+    100% { left: 100%; }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes reverse-spin {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+
+  @keyframes slide-vertical {
+    0% { transform: translateY(-100%) scaleX(2); }
+    100% { transform: translateY(200%) scaleX(2); }
+  }
+
+  @keyframes horizontal-scan {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes vertical-scan {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes diagonal-scan {
+    0% { transform: rotate(30deg) translateX(-100%); }
+    100% { transform: rotate(30deg) translateX(100%); }
+  }
+
+  .animate-scan {
+    animation: scan 4s linear infinite;
+  }
+
+  .animate-scan-reverse {
+    animation: scan 5s linear infinite reverse;
+  }
+
+  .animate-scan-vertical {
+    animation: scan-vertical 6s linear infinite;
+  }
+
+  .animate-scan-horizontal {
+    animation: scan-horizontal 8s linear infinite;
+  }
+
+  .animate-blink {
+    animation: blink 1.5s infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  .animate-pulse {
+    animation: pulse 2s infinite;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+  }
+
+  .animate-reverse-spin {
+    animation: reverse-spin 15s linear infinite;
+  }
+
+  .animate-scan {
+    animation: scan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .animate-blink {
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  .scanner-line-horizontal {
+    @apply absolute top-0 left-0 w-full h-[1px] 
+           bg-gradient-to-r from-transparent via-[#00ff00] to-transparent;
+    will-change: transform;
+    backface-visibility: hidden;
+    animation: scan-horizontal 5s linear infinite;
+  }
+
+  .scanner-line-vertical {
+    @apply absolute h-full w-[2px] bg-gradient-to-b from-transparent via-[#00ff00] to-transparent;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-1px);
+    animation: vertical-scan 4s linear infinite reverse;
+}
+
+  .animate-diagonal-scan {
+    animation: diagonal-scan 10s linear infinite;
+  }
+
+  .scanner-line-base {
+    @apply absolute pointer-events-none opacity-30;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .scanner-line-horizontal {
+    @apply scanner-line-base w-full h-[1px];
+    background: linear-gradient(90deg, transparent, #00ff00, transparent);
+    left: 0;
+    top: 50%;
+  }
+
+  .scanner-line-vertical {
+    @apply scanner-line-base h-full w-[1px];
+    background: linear-gradient(180deg, transparent, #00ff00, transparent);
+    top: 0;
+    left: 50%;
+  }
+
+  .scanner-line-diagonal {
+    @apply scanner-line-base w-[150%] h-[1px];
+    background: linear-gradient(90deg, transparent, #00ff00, transparent);
+    top: 50%;
+    left: -25%;
+    opacity: 0.2;
+  }
 }

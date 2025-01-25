@@ -16,7 +16,7 @@ const defineUser = (sequelize, DataTypes) => {
       }
     },
     firebaseUid: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(1200),  // Increased length
       allowNull: false,
       unique: true
     },
@@ -33,3 +33,4 @@ const defineUser = (sequelize, DataTypes) => {
 };
 
 export default defineUser;
+

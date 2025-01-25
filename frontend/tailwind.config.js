@@ -53,7 +53,28 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
+  		},
+      animation: {
+        'spin-slow': 'spin-slow 20s linear infinite',
+        'reverse-spin': 'reverse-spin 15s linear infinite',
+        'scan-horizontal': 'scan-horizontal 5s linear infinite',
+        'scan-vertical': 'scan-vertical 4s linear infinite reverse',
+        'scan-diagonal': 'scan-diagonal 10s linear infinite',
+      },
+      keyframes: {
+        'scan-horizontal': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' }
+        },
+        'scan-vertical': {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100%)' }
+        },
+        'scan-diagonal': {
+          '0%': { transform: 'rotate(30deg) translateX(-100%)' },
+          '100%': { transform: 'rotate(30deg) translateX(100%)' }
+        }
+      }
   	}
   },
   plugins: [require("tailwindcss-animate")],
