@@ -96,14 +96,15 @@
     backface-visibility: hidden;
     transition: 
       transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      z-index 0.3s 0.1s;
+      z-index 0.3s 0.1s,
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .gadget-card:hover {
     @apply scale-105 -translate-y-2;
     box-shadow: 
-      0 0 30px var(--card-glow-color),
-      0 0 60px rgba(0, 0, 0, 0.3);
+      0 0 40px var(--card-glow-color),
+      0 0 80px rgba(0, 0, 0, 0.5);
   }
 
   .cyberpunk-overlay {
@@ -174,8 +175,8 @@
 
   .gadget-card:hover {
     box-shadow: 
-      0 0 30px var(--card-glow-color),
-      0 0 60px rgba(0, 0, 0, 0.3);
+      0 0 40px var(--card-glow-color),
+      0 0 80px rgba(0, 0, 0, 0.5);
   }
 
   @keyframes pulse {

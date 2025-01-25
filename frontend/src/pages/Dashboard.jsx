@@ -52,6 +52,21 @@ function Dashboard() {
       '#ff00ff', // Magenta
       '#ffff00', // Yellow
       '#1e90ff', // Dodger blue
+        '#ff1493', // Deep pink
+        '#00bfff', // Deep sky blue
+        '#ff4500', // Orange red
+        '#ff8c00', // Dark orange
+        '#ff69b4', // Hot pink
+        '#00fa9a', // Medium spring green
+        '#ff6347', // Tomato
+        '#ff00ff', // Fuchsia
+        '#ff7f50', // Coral
+        '#ff1493', // Deep pink
+        '#ff69b4', // Hot pink
+
+        
+
+
     ];
     return neonColors[Math.floor(Math.random() * neonColors.length)];
   };
