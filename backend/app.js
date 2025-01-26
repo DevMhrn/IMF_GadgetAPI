@@ -33,7 +33,23 @@ app.use((req, res, next) => {
 });
 
 // Middleware
-app.use(cors());
+// CORS Configuration
+const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []; // Array for potential future multiple origins
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) { // Allow requests with no origin (like mobile apps or curl requests)
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(cors()); // Allow all in development for easier testing
+} else {
+  app.use(cors(corsOptions)); // Apply restricted CORS in production
+}
 app.use(express.json());
 
 // Routes
