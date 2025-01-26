@@ -68,13 +68,22 @@ export const updateGadget = async (req, res) => {
         ...(req.user.role !== 'ADMIN' ? { UserId: req.user.id } : {})
       }
     });
+    
     if (!gadget) {
-      return res.status(404).send('Gadget not found or unauthorized');
+      return res.status(404).json({ message: 'Gadget not found or unauthorized' });
     }
+
+    if (gadget.status === 'Destroyed') {
+      return res.status(400).json({ message: 'Cannot update a destroyed gadget' });
+    }
+
     await gadget.update(req.body);
-    res.json(gadget);
+    res.json({ 
+      ...gadget.toJSON(),
+      message: `Gadget ${gadget.name} has been updated successfully`
+    });
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -87,16 +96,26 @@ export const deleteGadget = async (req, res) => {
         ...(req.user.role !== 'ADMIN' ? { UserId: req.user.id } : {})
       }
     });
+    
     if (!gadget) {
-      return res.status(404).send('Gadget not found or unauthorized');
+      return res.status(404).json({ message: 'Gadget not found or unauthorized' });
+    }
+
+    if (gadget.status === 'Destroyed') {
+      return res.status(400).json({ message: 'Gadget is already destroyed' });
+    }
+
+    if (gadget.status === 'Decommissioned') {
+      return res.status(400).json({ message: 'Gadget is already decommissioned' });
     }
 
     await gadget.update({ status: 'Decommissioned', decommissionedAt: new Date() });
-    res.status(201).send({
-        message: `Gadget ${gadget.name} has been decommissioned`
+    res.json({
+      ...gadget.toJSON(),
+      message: `Gadget ${gadget.name} has been decommissioned`
     });
   } catch (err) {
-    res.status(500).send(err.message);
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -112,19 +131,19 @@ export const selfDestruct = async (req, res, next) => {
     });
     
     if (!gadget) {
-      logger.error(`Gadget not found: ${req.params.id}`);
-      return res.status(404).json({ message: 'Gadget not found' });
+      return res.status(404).json({ message: 'Gadget not found or unauthorized' });
     }
 
-    const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    logger.info(`Generated confirmation code for ${gadget.name}: ${confirmationCode}`);
+    if (gadget.status === 'Destroyed') {
+      return res.status(400).json({ message: 'Gadget is already destroyed' });
+    }
 
     await gadget.update({ status: 'Destroyed' });
     logger.warn(`Gadget ${gadget.name} has been destroyed`);
 
     res.json({ 
-      message: `Self-destruct sequence completed for ${gadget.name}`,
-      confirmationCode 
+      ...gadget.toJSON(),
+      message: `Self-destruct sequence completed for ${gadget.name}`
     });
   } catch (error) {
     logger.error('Self-destruct sequence failed:', error);

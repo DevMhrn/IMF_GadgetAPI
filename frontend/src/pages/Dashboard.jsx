@@ -6,6 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import api from '../libs/apiCalls';
 import { useStore } from '../store/index';
 import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { toast } from "sonner";
 
 
 
@@ -130,7 +131,12 @@ function Dashboard() {
   };
 
   const handleUpdateGadget = async (gadgetId) => {
-    setEditingGadget(gadgets.find(gadget => gadget.id === gadgetId));
+    const gadget = gadgets.find(g => g.id === gadgetId);
+    if (gadget.status === 'Destroyed') {
+      toast.error(`Gadget ${gadget.name} is already destroyed`);
+      return;
+    }
+    setEditingGadget(gadget);
     setShowUpdateDialog(true);
   };
 
@@ -153,15 +159,22 @@ function Dashboard() {
             : gadget
         )
       );
+      toast.success(response.data.message || "Gadget updated successfully");
       closeUpdateDialog();
       setEditingGadget(null);
     } catch (error) {
+      toast.error(error.response?.data?.message || "Error updating gadget");
       console.error('Error updating gadget:', error);
     }
   };
 
   const handleDeleteGadget = (gadgetId) => {
-    setDeletingGadget(gadgets.find(gadget => gadget.id === gadgetId));
+    const gadget = gadgets.find(g => g.id === gadgetId);
+    if (gadget.status === 'Destroyed') {
+      toast.error(`Gadget ${gadget.name} is already destroyed`);
+      return;
+    }
+    setDeletingGadget(gadget);
     setShowDeleteDialog(true);
   };
 
@@ -169,7 +182,7 @@ function Dashboard() {
     if (!deletingGadget) return;
 
     try {
-      await api.delete(`/gadgets/${deletingGadget.id}`);
+      const response = await api.delete(`/gadgets/${deletingGadget.id}`);
       setGadgets(prevGadgets =>
         prevGadgets.map(gadget =>
           gadget.id === deletingGadget.id
@@ -177,15 +190,22 @@ function Dashboard() {
             : gadget
         )
       );
+      toast.success(response.data.message);
       closeDeleteDialog();
       setDeletingGadget(null);
     } catch (error) {
+      toast.error(error.response?.data?.message || "Error decommissioning gadget");
       console.error('Error deleting gadget:', error);
     }
   };
 
   const handleSelfDestruct = (gadgetId) => {
-    setSelfDestructingGadget(gadgets.find(gadget => gadget.id === gadgetId));
+    const gadget = gadgets.find(g => g.id === gadgetId);
+    if (gadget.status === 'Destroyed') {
+      toast.error(`Gadget ${gadget.name} is already destroyed`);
+      return;
+    }
+    setSelfDestructingGadget(gadget);
     setShowSelfDestructDialog(true);
   };
 
@@ -195,16 +215,37 @@ function Dashboard() {
     // In a real application, you would validate the confirmation code here
 
     try {
-      await api.post(`/gadgets/${selfDestructingGadget.id}/self-destruct`);
+      const response = await api.post(`/gadgets/${selfDestructingGadget.id}/self-destruct`);
       setGadgets(prevGadgets =>
         prevGadgets.map(gadget =>
           gadget.id === selfDestructingGadget.id ? { ...gadget, status: 'Destroyed' } : gadget
         )
       );
+      toast.success(response.data.message);
       closeSelfDestructDialog();
       setSelfDestructingGadget(null);
     } catch (error) {
+      toast.error(error.response?.data?.message || "Error destroying gadget");
       console.error('Error self-destructing gadget:', error);
+    }
+  };
+
+  const handleButtonClick = (gadget, action) => {
+    if (gadget.status === 'Destroyed') {
+      toast.error(`Gadget ${gadget.name} is already destroyed`);
+      return;
+    }
+
+    switch (action) {
+      case 'update':
+        handleUpdateGadget(gadget.id);
+        break;
+      case 'delete':
+        handleDeleteGadget(gadget.id);
+        break;
+      case 'destroy':
+        handleSelfDestruct(gadget.id);
+        break;
     }
   };
 
@@ -399,31 +440,34 @@ function Dashboard() {
                 <div className="space-y-2 pt-2 border-t border-current">
                   <Button
                     variant="ghost"
-                    className="w-full justify-start bg-transparent border border-current 
-                           hover:bg-current/20 text-current hover:text-current transition-colors
+                    className={`w-full justify-start bg-transparent border border-current 
+                           hover:bg-current/20 text-current hover:text-current
                            translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 delay-100"
-                    onClick={() => handleUpdateGadget(gadget.id)}
+                           transition-all duration-300 delay-100
+                           ${gadget.status === 'Destroyed' ? 'opacity-50' : ''}`}
+                    onClick={() => handleButtonClick(gadget, 'update')}
                   >
                     Change Identity
                   </Button>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start bg-transparent border border-current 
-                           hover:bg-current/20 text-current hover:text-current transition-colors
+                    className={`w-full justify-start bg-transparent border border-current 
+                           hover:bg-current/20 text-current hover:text-current 
                            translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 delay-200"
-                    onClick={() => handleDeleteGadget(gadget.id)}
+                           transition-all duration-300 delay-200
+                           ${gadget.status === 'Destroyed' ? 'opacity-50' : ''}`}
+                    onClick={() => handleButtonClick(gadget, 'delete')}
                   >
                     Decommission
                   </Button>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start bg-transparent border border-current 
-                           hover:bg-current/20 text-current hover:text-current transition-colors
+                    className={`w-full justify-start bg-transparent border border-current 
+                           hover:bg-current/20 text-current hover:text-current 
                            translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 delay-300"
-                    onClick={() => handleSelfDestruct(gadget.id)}
+                           transition-all duration-300 delay-300
+                           ${gadget.status === 'Destroyed' ? 'opacity-50' : ''}`}
+                    onClick={() => handleButtonClick(gadget, 'destroy')}
                   >
                     Self-Destruct
                   </Button>
