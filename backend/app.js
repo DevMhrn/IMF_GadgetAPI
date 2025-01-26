@@ -37,12 +37,13 @@ app.use((req, res, next) => {
 const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []; // Array for potential future multiple origins
 const corsOptions = {
   origin: (origin, callback) => {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) { // Allow requests with no origin (like mobile apps or curl requests)
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
+  optionsSuccessStatus: 200, // Important for preflight requests
 };
 
 if (process.env.NODE_ENV === 'development') {
