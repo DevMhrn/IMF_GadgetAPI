@@ -129,7 +129,7 @@ Secure REST API for managing IMF's covert operational gadgets with mission-criti
 ## Contributing
 Feel free to fork and submit pull requests!
 
-## POSTMAN Collection
+## POSTMAN Collection - [Detailed DOC](https://docs.google.com/document/d/1vRvGO7beddbwJ33kIRJl9XLkQnMIAFT8KzYjrGUTNPM/edit?usp=sharing)
 ```JSON
   {
 	"info": {
