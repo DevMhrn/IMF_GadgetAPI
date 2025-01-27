@@ -118,7 +118,7 @@ Secure REST API for managing IMF's covert operational gadgets with mission-criti
     VITE_FIREBASE_MESSAGING_SENDER_ID={FROM FIREBASE}
     VITE_FIREBASE_APP_ID={FROM FIREBASE}
     VITE_FIREBASE_MEASUREMENT_ID={FROM FIREBASE}
-    VITE_BACKEND_URL = http://localhost:5173/
+    VITE_BACKEND_URL = http://localhost:5000/
     ```
 
 4. Start the frontend:
