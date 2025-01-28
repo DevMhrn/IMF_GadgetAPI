@@ -1,0 +1,10 @@
+name: Keep Backend Alive
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Runs every 30 minutes
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend
+        run: curl -X GET ${{ secrets.BACKEND_URL }}
