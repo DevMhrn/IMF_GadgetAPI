@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    container_name: imf_backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:14
+    container_name: imf_db
+    environment:
+      - JWT_SECRET=IMF_GADGETS
+      - DATABASE_URL=postgresql://postgres.ijipiycalldjmmxzdewi:IMF_Gadget_API@123@aws-0-ap-south-1.pooler.supabase.com:5432/postgres
+      - NODE_ENV=development
+      - DB_SSL=false
+      - DB_SYNC_FORCE=false  # WARNING: This will drop all tables!
+      - DB_SYNC_ALTER=false  # Use this for safe schema updates
+      # For normal operation: Keep both sync variables false
+      # For schema updates: Set DB_SYNC_ALTER=true
+      # For complete reset: Set DB_SYNC_FORCE=true (warning: this deletes all data!)
+      - FRONTEND_URL=http://localhost:5173
+
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  db_data:
