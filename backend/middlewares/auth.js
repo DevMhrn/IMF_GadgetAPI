@@ -7,6 +7,7 @@ import db from '../models/index.js';
  * @param {Response} res - Express response object
  * @param {NextFunction} next - Express next function
  */
+
 export const authenticateToken = async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'];

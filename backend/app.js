@@ -9,6 +9,7 @@ import db from './models/index.js';
 import gadgetRoutes from './routes/gadget.js';
 import authRoutes from './routes/auth.js';
 import {errorHandler} from './middlewares/error.js';
+import limiter from './middlewares/rateLimiter.js';
 
 dotenv.config();
 
@@ -33,6 +34,14 @@ app.use((req, res, next) => {
 });
 
 // Middleware
+
+app.use(limiter); // Apply rate limiter to all requests
+
+
+
+
+
+
 // CORS Configuration
 const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []; // Array for potential future multiple origins
 const corsOptions = {
