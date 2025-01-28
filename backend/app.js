@@ -62,6 +62,15 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use(express.json());
 
+// Root route
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Welcome to IMF Gadgets API',
+    status: 'OK',
+    version: '1.0.0'
+  });
+});
+
 // Routes
 app.use('/api/gadgets', gadgetRoutes);
 app.use('/api/auth', authRoutes);
