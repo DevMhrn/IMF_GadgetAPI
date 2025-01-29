@@ -1,10 +1,18 @@
 name: Keep Backend Alive
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Runs every 30 minutes
+    - cron: '*/15 * * * *'  # Runs every 30 minutes
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      - name: Print Backend URL
+        run: echo "Backend URL:${{ secrets.BACKEND_URL }}"
       - name: Ping Render Backend
-        run: curl -X GET ${{ secrets.BACKEND_URL }}
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X GET ${{ secrets.BACKEND_URL }})
+          echo "Response Code: $response"
+          if [ "$response" -ne 200 ]; then
+            echo "Backend ping failed"
+            exit 1
+          fi
