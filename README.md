@@ -1,4 +1,8 @@
-# IMF Gadget  API - 
+# IMF Gadget  API 
+
+## Check this out using 
+- ### [SwaggerUI](https://imf-gadgetapi-swagger.onrender.com/api-docs)
+- ### [GitRepository](https://github.com/DevMhrn/IMF_GadgetAPI_SWAGGER)
 
 #### [Project Video](https://www.loom.com/share/8ae3c22cfd294dd7964c1209657d7d30?sid=85457b85-e4ff-4031-a993-fc4b55c8663d)
 
